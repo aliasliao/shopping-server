@@ -13,7 +13,7 @@ router
         let conn = await pool.getConnection()
         let sql = 'SELECT * FROM `news`'
         let [rows] = await conn.query(sql).catch(err => { console.log('[@_@]' + err.message) })
-        ctx.body = rows[0]
+        ctx.body = rows
         await conn.release()
         await next()
     })
