@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `order` (
 CREATE TABLE IF NOT EXISTS `news` (
   id          VARCHAR(8) NOT NULL,
   title       VARCHAR(64) NOT NULL,
+  abstract    VARCHAR(128) NOT NULL,
   contentUrl  VARCHAR(256) NOT NULL,
   imageUrl    VARCHAR(256),
 
