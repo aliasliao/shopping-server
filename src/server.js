@@ -28,7 +28,7 @@ app.use(async (ctx) => {
         await send(ctx, ctx.path, {root: PUBLIC})
     }
     else {
-        ctx.path = ctx.body
+        ctx.path = JSON.stringify(ctx.body).slice(0, 10)
     }
 
     ctx.myLog += decodeURI(ctx.path)
