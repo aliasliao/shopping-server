@@ -28,12 +28,12 @@ app.use(async (ctx) => {
         await send(ctx, ctx.path, {root: PUBLIC})
     }
     else {
-        ctx.path = JSON.stringify(ctx.body).slice(0, 10)
+        ctx.path = JSON.stringify(ctx.body).slice(0, 20) + '...'
     }
 
     ctx.myLog += decodeURI(ctx.path)
 })
 
 app.listen(PORT, () => {
-    console.log(`Koa server is listening on port ${PORT}...`)
+    console.log(`\nKoa server is listening on port ${PORT}...\n`)
 })
