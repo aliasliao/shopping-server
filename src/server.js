@@ -5,6 +5,9 @@ const { resolve, join } = require('path')
 const router = require('./routes')
 const fs = require('fs')
 
+const pool = require('./DATABASE')
+
+
 let app = new Koa()
 
 const ROOT = resolve(__dirname, '../')  // project root
@@ -19,6 +22,12 @@ app.use(async (ctx, next) => {
     ctx.myLog = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
     await next()
     console.log(ctx.myLog)
+})
+
+app.use(async (ctx, next) => {
+    ctx.conn = await pool.getConnection()
+    await next()
+    await ctx.conn.release()
 })
 
 app.use(router.routes())
