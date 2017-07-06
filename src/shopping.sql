@@ -1,8 +1,8 @@
-# DROP TABLE IF EXISTS `order`;
-# DROP TABLE IF EXISTS `goods`;
-# DROP TABLE IF EXISTS `consumer`;
-# DROP TABLE IF EXISTS `merchant`;
-# DROP TABLE IF EXISTS `news`;
+DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `goods`;
+DROP TABLE IF EXISTS `consumer`;
+DROP TABLE IF EXISTS `merchant`;
+DROP TABLE IF EXISTS `news`;
 
 
 CREATE TABLE IF NOT EXISTS `consumer` (
@@ -64,7 +64,8 @@ CREATE TABLE IF NOT EXISTS `news` (
   title       VARCHAR(64) NOT NULL,
   abstract    VARCHAR(128) NOT NULL,
   contentUrl  VARCHAR(256) NOT NULL,
-  imageUrl    VARCHAR(256),
+  imageUrl    VARCHAR(256) NOT NULL,
+  time        DATETIME NOT NULL,
 
   CONSTRAINT news_pk PRIMARY KEY (id)
 
