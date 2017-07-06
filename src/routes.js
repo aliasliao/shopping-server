@@ -10,7 +10,7 @@ router
         await next()
     })
     .get('/test', async (ctx, next) => {
-        let sql = 'SELECT `title`, `abstract`, `url`, `image`, `time` FROM `news` LIMIT 20'
+        let sql = 'SELECT `title`, `abstract`, `url`, `image`, `time` FROM `news` ORDER BY `time` DESC LIMIT 30'
         let [rows] = await ctx.conn.query(sql).catch(err => { console.log('[@_@]' + err.message) })
         let adjust = rows.map(item => ({
             title: item.title,
