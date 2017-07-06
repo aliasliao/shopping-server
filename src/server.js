@@ -28,7 +28,10 @@ app.use(async (ctx) => {
         await send(ctx, ctx.path, {root: PUBLIC})
     }
     else {
-        ctx.path = JSON.stringify(ctx.body).slice(0, 20) + '...'
+        if (ctx.body !== undefined)
+            ctx.path = JSON.stringify(ctx.body).slice(0, 20) + '...'
+        else
+            ctx.path = 'not found'
     }
 
     ctx.myLog += decodeURI(ctx.path)
