@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const pool = require('./database')
+const pool = require('./DATABASE')
 
 let router = new Router();
 
