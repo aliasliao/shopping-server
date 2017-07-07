@@ -38,7 +38,7 @@ app.use(async (ctx) => {
     }
     else {
         if (ctx.body !== undefined)
-            ctx.path = JSON.stringify(ctx.body).slice(0, 20) + '...'
+            ctx.path = JSON.stringify(ctx.body).slice(0, 40) + '...'
         else
             ctx.path = 'not found'
     }
