@@ -21,6 +21,7 @@ app.use(bodyParser({
 app.use(async (ctx, next) => {
     ctx.myLog = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
     await next()
+    console.log()
     console.log(ctx.myLog)
 })
 
@@ -38,7 +39,7 @@ app.use(async (ctx) => {
     }
     else {
         if (ctx.body !== undefined)
-            ctx.path = JSON.stringify(ctx.body).slice(0, 40) + '...'
+            ctx.path = JSON.stringify(ctx.body).slice(0, 60) + '...'
         else
             ctx.path = 'not found'
     }
