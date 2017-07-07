@@ -14,43 +14,20 @@ const ROOT = resolve(__dirname, '../')  // project root
 const PUBLIC = resolve(ROOT, './')  // serve static file here
 const PORT = 3000
 
-//app.use(async (ctx, next) => {
-//    let body = []
-//    let request = ctx.req
-//    let bodyPromise = new Promise(resolve => {
-//
-//        request.on('error', (err) => { console.log(err) })
-//            .on('data', (chunk) => { body.push(chunk) })
-//            .on('end', () => {
-//                body = body.length !== 0
-//                    ? Buffer.concat(body).toString()
-//                    : '[nobody]'
-//                resolve(body)
-//            })
-//
-//    })
-//    body = await bodyPromise
-//    console.log(body)
-//    if (body !== '[nobody]')
-//        ctx.request.body = JSON.parse(body)
-//
-//    await next()
-//})
-
 app.use(bodyParser({
     enableTypes: ['json', 'form', 'text']
 }))
 
-app.use(async (ctx, next) => {
-    ctx.myLog = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
-    await next()
-    console.log(ctx.myLog)
-})
-
+// initial log, conn, consumer id
 app.use(async (ctx, next) => {
     ctx.conn = await pool.getConnection()
+    ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
+    ctx.consumerId = ctx.cookies.get('consumerId')
+
     await next()
+
     await ctx.conn.release()
+    console.log(ctx.log)
 })
 
 app.use(router.routes())
@@ -66,7 +43,7 @@ app.use(async (ctx) => {
             ctx.path = 'not found'
     }
 
-    ctx.myLog += decodeURI(ctx.path)
+    ctx.log += decodeURI(ctx.path)
 })
 
 app.listen(PORT, () => {

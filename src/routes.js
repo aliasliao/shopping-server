@@ -27,6 +27,7 @@ router
         await newsConn.release()
         await next()
     })
+
     // consumer register
     .post('/consumer/register', async(ctx, next) => {
         let formData = ctx.request.body
@@ -59,10 +60,38 @@ router
 
         await next()
     })
+
     // consumer login
     .post('/consumer/login', async (ctx, next) => {
         let formData = ctx.request.body
         let sql = 'SELECT `name`, `password` FROM `consumer` WHERE `name`=?'
+
+        let rows
+        try {
+            [rows] = await ctx.conn.query(sql, [formData.name])
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+    })
+
+    // fetch consumer info
+    .get('/consumer/info', async (ctx, next) => {
+        if (ctx.consumerId === undefined) {
+            ctx.body = 'no consumer logged in'
+            //await next()
+        }
+
+        let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM' +
+            '`consumer` WHERE `id`=?'
+
+        try {
+            let [rows] = await ctx.conn.query(sql, ['user3821'])  // TODO: consumerId here
+            ctx.body = rows[0]
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
+        await next()
     })
 
 module.exports = router
