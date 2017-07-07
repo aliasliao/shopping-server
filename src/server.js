@@ -14,9 +14,30 @@ const ROOT = resolve(__dirname, '../')  // project root
 const PUBLIC = resolve(ROOT, './')  // serve static file here
 const PORT = 3000
 
-app.use(bodyParser({
-    enableTypes: ['json', 'form', 'text']
-}))
+app.use(async (ctx, next) => {
+    let body = []
+    let request = ctx.req
+    let bodyPromise = new Promise(resolve => {
+
+        request.on('error', (err) => { console.log(err) })
+            .on('data', (chunk) => { body.push(chunk) })
+            .on('end', () => {
+                body = body.length !== 0
+                    ? Buffer.concat(body).toString()
+                    : '[nobody]'
+                resolve(body)
+            })
+
+    })
+    body = await bodyPromise
+    console.log(body)
+    ctx.request.body = JSON.parse(body)
+    await next()
+})
+
+//app.use(bodyParser({
+//    enableTypes: ['json', 'form', 'text']
+//}))
 
 app.use(async (ctx, next) => {
     ctx.myLog = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
