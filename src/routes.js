@@ -30,23 +30,28 @@ router
     // consumer register
     .post('/consumer/register', async(ctx, next) => {
         let formData = ctx.request.body
+        console.log(JSON.stringify(formData))
         let sql = 'INSERT INTO `consumer` ' +
             '(`id`, `name`, `password`, `address`, `accountNum`, `phone`, `email`)' +
             'VALUES (?, ?, ?, ?, ?, ?, ?)'
-        let data = [
-            'user' + utils.randomString(4, '1234567890'),
-            formData.name,
-            utils.md5(formData.password),
-            formData.address,
-            formData.accountNum,
-            formData.phone,
-            formData.email
-        ]
 
-        let result = await ctx.conn.query(sql, data)
-            .catch(err => {
-                ctx.body = `[${err.code}] ${err.message}`
-            })
+        let data, result
+        try {
+            data = [
+                'user' + utils.randomString(4, '1234567890'),
+                formData.name,
+                utils.md5(formData.password),
+                formData.address,
+                formData.accountNum,
+                formData.phone,
+                formData.email
+            ]
+
+            result = await ctx.conn.query(sql, data)
+        } catch(err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
         if (result) {
             ctx.body = 'success'
             ctx.cookies.set('consumerId', data[0])
