@@ -21,7 +21,6 @@ app.use(bodyParser({
 app.use(async (ctx, next) => {
     ctx.myLog = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
     await next()
-    console.log()
     console.log(ctx.myLog)
 })
 
