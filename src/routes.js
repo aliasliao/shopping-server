@@ -130,7 +130,7 @@ router
         }
 
         let sql = 'SELECT order.id, order.time, order.state, goods.name AS goodsName, goods.imageUrl AS goodsImageUrl, goods.price AS goodsPrice, merchant.name AS merchantName ' +
-            'FROM `order `' +
+            'FROM `order` ' +
             'INNER JOIN `merchant` ON order.merchantId=merchant.id ' +
             'INNER JOIN `goods` ON order.goodsId=goods.id ' +
             'WHERE order.consumerId=?'
