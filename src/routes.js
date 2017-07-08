@@ -134,6 +134,8 @@ router
             'INNER JOIN `merchant` ON order.merchantId=merchant.id ' +
             'INNER JOIN `goods` ON order.goodsId=goods.id ' +
             'WHERE order.consumerId=?'
+        console.log(sql)
+        console.log(ctx.consumerId)
 
         try {
             let [rows] = await ctx.conn.query(sql, [ctx.consumerId])
