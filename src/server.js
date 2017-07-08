@@ -24,7 +24,7 @@ app.use(async (ctx, next) => {
     ctx.consumerId = ctx.cookies.get('consumerId')  // TODO: check password here
 
     ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]  [${ctx.request.headers['user-agent']}]
-    ${JSON.stringify(ctx.request.body).slice(0,100)}... ==> `
+    ${JSON.stringify(ctx.request.body).slice(0,50)}... ==> `
 
     console.log('\n***********************************************')  // ensure this line is always top
 
@@ -42,7 +42,7 @@ app.use(async (ctx) => {
     }
     else {
         if (ctx.body !== undefined)
-            ctx.path = JSON.stringify(ctx.body).slice(0, 200) + '...'
+            ctx.path = JSON.stringify(ctx.body).slice(0, 100) + '...'
         else
             ctx.path = 'not found'
     }
