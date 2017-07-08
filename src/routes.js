@@ -31,7 +31,6 @@ router
     // consumer register
     .post('/consumer/register', async(ctx, next) => {
         let formData = ctx.request.body
-        console.log('\n' + JSON.stringify(formData))
         let sql = 'INSERT INTO `consumer` ' +
             '(`id`, `name`, `password`, `address`, `accountNum`, `phone`, `email`)' +
             'VALUES (?, ?, ?, ?, ?, ?, ?)'
@@ -65,7 +64,6 @@ router
     // consumer login
     .post('/consumer/login', async (ctx, next) => {
         let formData = ctx.request.body
-        console.log(JSON.stringify(formData))
         let sql = 'SELECT `id`, `password` FROM `consumer` WHERE `name`=?'
 
         if (formData.name === undefined || formData.password === undefined) {
