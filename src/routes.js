@@ -122,7 +122,6 @@ router
 
     // consumer fetch order list
     .get('/consumer/order', async (ctx, next) => {
-        console.log(JSON.stringify(ctx.request.headers))
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
             await next()
