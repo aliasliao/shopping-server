@@ -24,7 +24,7 @@ app.use(async (ctx, next) => {
     ctx.consumerId = ctx.cookies.get('consumerId')  // TODO: check password here
 
     ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]
-    ${JSON.stringify(ctx.request.body).slice(0,40)}... ==> `
+    ${JSON.stringify(ctx.request.body).slice(0,100)}... ==> `
 
     await next()
 
@@ -40,7 +40,7 @@ app.use(async (ctx) => {
     }
     else {
         if (ctx.body !== undefined)
-            ctx.path = JSON.stringify(ctx.body).slice(0, 60) + '...'
+            ctx.path = JSON.stringify(ctx.body).slice(0, 200) + '...'
         else
             ctx.path = 'not found'
     }
