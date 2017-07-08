@@ -39,7 +39,7 @@ router
         let data, result
         try {
             data = [
-                'user' + utils.randomString(4, '1234567890'),
+                'cons' + utils.randomString(4, '1234567890'),
                 formData.name,
                 utils.md5(formData.password),
                 formData.address,
@@ -104,14 +104,39 @@ router
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
             //await next()
+            //return
         }
 
         let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM' +
             '`consumer` WHERE `id`=?'
 
         try {
-            let [rows] = await ctx.conn.query(sql, ['user3821'])  // TODO: consumerId here
+            let [rows] = await ctx.conn.query(sql, ['user3821'])  // TODO: consumerId from cookie here
             ctx.body = rows[0]
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
+        await next()
+    })
+
+    // consumer fetch order list
+    .get('/consumer/order', async (ctx, next) => {
+        if (ctx.consumerId === undefined) {
+            ctx.body = 'no consumer logged in'
+            await next()
+            return
+        }
+
+        let sql = 'SELECT order.id, order.time, order.state, goods.name, goods.imageUrl, merchant.name' +
+            'FROM `order`' +
+            'INNER JOIN `merchant` ON order.merchantId=merchant.id' +
+            'INNER JOIN `goods` ON order.goodsId=goods.id' +
+            'WHERE order.consumerId=?'
+
+        try {
+            let [rows] = await ctx.conn.query(sql, [ctx.consumerId])
+            ctx.body = rows
         } catch (err) {
             ctx.body = `[${err.code}] ${err.message}`
         }

@@ -22,7 +22,7 @@ app.use(bodyParser({
 app.use(async (ctx, next) => {
     ctx.conn = await pool.getConnection()
     ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)} => `
-    ctx.consumerId = ctx.cookies.get('consumerId')
+    ctx.consumerId = ctx.cookies.get('consumerId')  // TODO: check password here
 
     await next()
 
