@@ -69,7 +69,7 @@ router
         let sql = 'SELECT `id`, `password` FROM `consumer` WHERE `name`=?'
 
         if (formData.name === undefined || formData.password === undefined) {
-            ctx.body = 'information not complete'
+            ctx.body = '用户信息不完整'
             await next()
             return
         }
@@ -89,11 +89,11 @@ router
                 ctx.cookies.set('hp', hp)
             }
             else {
-                ctx.body = 'wrong password'
+                ctx.body = '密码错误！'
             }
         }
         else {
-            ctx.body = 'consumer name not exist'
+            ctx.body = '用户名不存在！'
         }
 
         await next()
