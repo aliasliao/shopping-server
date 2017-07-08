@@ -56,6 +56,7 @@ router
         if (result) {
             ctx.body = 'success'
             ctx.cookies.set('consumerId', data[0])
+            ctx.cookies.set('hp', data[2])
         }
 
         await next()
@@ -64,14 +65,38 @@ router
     // consumer login
     .post('/consumer/login', async (ctx, next) => {
         let formData = ctx.request.body
-        let sql = 'SELECT `name`, `password` FROM `consumer` WHERE `name`=?'
+        console.log(JSON.stringify(formData))
+        let sql = 'SELECT `id`, `password` FROM `consumer` WHERE `name`=?'
+
+        if (formData.name === undefined || formData.password === undefined) {
+            ctx.body = 'information not complete'
+            await next()
+            return
+        }
 
         let rows
         try {
-            [rows] = await ctx.conn.query(sql, [formData.name])
+            ;[rows] = await ctx.conn.query(sql, [formData.name])
         } catch (err) {
             ctx.body = `[${err.code}] ${err.message}`
         }
+
+        if (rows.length > 0) {
+            let hp = utils.md5(formData.password)
+            if (rows[0].password === hp) {
+                ctx.body = 'success'
+                ctx.cookies.set('consumerId', rows[0].id)
+                ctx.cookies.set('hp', hp)
+            }
+            else {
+                ctx.body = 'wrong password'
+            }
+        }
+        else {
+            ctx.body = 'consumer name not exist'
+        }
+
+        await next()
     })
 
     // fetch consumer info
