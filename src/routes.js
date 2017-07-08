@@ -80,6 +80,7 @@ router
             ctx.body = `[${err.code}] ${err.message}`
         }
 
+        let maxAge = moment.duration(3, 'hours').asMilliseconds()
         if (rows.length > 0) {
             let hp = utils.md5(formData.password)
             if (rows[0].password === hp) {
