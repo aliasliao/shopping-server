@@ -32,7 +32,7 @@ router
     .post('/consumer/register', async(ctx, next) => {
         let formData = ctx.request.body
         let sql = 'INSERT INTO `consumer` ' +
-            '(`id`, `name`, `password`, `address`, `accountNum`, `phone`, `email`)' +
+            '(`id`, `name`, `password`, `address`, `accountNum`, `phone`, `email`) ' +
             'VALUES (?, ?, ?, ?, ?, ?, ?)'
 
         let data, result
@@ -107,7 +107,7 @@ router
             //return
         }
 
-        let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM' +
+        let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM ' +
             '`consumer` WHERE `id`=?'
 
         try {

@@ -26,6 +26,8 @@ app.use(async (ctx, next) => {
     ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]
     ${JSON.stringify(ctx.request.body).slice(0,100)}... ==> `
 
+    console.log('\n***********************************************')
+
     await next()
 
     await ctx.conn.release()
