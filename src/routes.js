@@ -120,6 +120,19 @@ router
         await next()
     })
 
+    // consumer modify consumer info
+    .post('/consumer/modifyInfo', async (ctx, next) => {
+        if (ctx.consumerId === undefined) {
+            ctx.body = 'no consumer logged in'
+            //await next()
+            //return
+        }
+
+        let formData = ctx.request.body  // TODO: check undefined field
+
+        let sql = 'INSERT `'
+    })
+
     // consumer fetch order list
     .get('/consumer/order', async (ctx, next) => {
         if (ctx.consumerId === undefined) {
@@ -133,8 +146,6 @@ router
             'INNER JOIN `merchant` ON order.merchantId=merchant.id ' +
             'INNER JOIN `goods` ON order.goodsId=goods.id ' +
             'WHERE order.consumerId=?'
-        console.log(sql)
-        console.log(ctx.consumerId)
 
         try {
             let [rows] = await ctx.conn.query(sql, [ctx.consumerId])
