@@ -52,10 +52,11 @@ router
             ctx.body = `[${err.code}] ${err.message}`
         }
 
+        let maxAge = moment.duration(3, 'hours').asMilliseconds()
         if (result) {
             ctx.body = 'success'
-            ctx.cookies.set('consumerId', data[0])
-            ctx.cookies.set('hp', data[2])
+            ctx.cookies.set('consumerId', data[0], {maxAge: maxAge})
+                .set('hp', data[2], {maxAge: maxAge})
         }
 
         await next()
@@ -83,8 +84,8 @@ router
             let hp = utils.md5(formData.password)
             if (rows[0].password === hp) {
                 ctx.body = 'success'
-                ctx.cookies.set('consumerId', rows[0].id)
-                ctx.cookies.set('hp', hp)
+                ctx.cookies.set('consumerId', rows[0].id, {maxAge: maxAge})
+                    .set('hp', hp, {maxAge: maxAge})
             }
             else {
                 ctx.body = '密码错误！'
