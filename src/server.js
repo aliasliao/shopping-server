@@ -23,10 +23,10 @@ app.use(async (ctx, next) => {
     ctx.conn = await pool.getConnection()
     ctx.consumerId = ctx.cookies.get('consumerId')  // TODO: check password here
 
-    ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]
+    ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]  [${ctx.request.headers['user-agent']}]
     ${JSON.stringify(ctx.request.body).slice(0,100)}... ==> `
 
-    console.log('\n***********************************************')
+    console.log('\n***********************************************')  // ensure this line is always top
 
     await next()
 
