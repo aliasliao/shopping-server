@@ -171,15 +171,6 @@ router
     // consumer fetch goodsInfo with goods id
     .get('/consumer/goodsInfo/:goodsId', async (ctx, next) => {
         let goodsId = decodeURI(ctx.params.goodsId)
-        let i = 0
-        for (let c in goodsId) {
-            console.log(i++, goodsId.charAt(c))
-        }
-        console.log('end')
-        goodsId = goodsId.slice(1, 9)  // TODO: hack here
-        console.log(goodsId.length)
-        console.log(goodsId)
-        console.log(goodsId === 'good0000')
 
         let sql = 'SELECT goods.name AS goodsName, goods.price AS goodsPrice, goods.imageUrl AS goodsImageUrl, merchant.name AS merchantName ' +
             'FROM `goods` ' +
