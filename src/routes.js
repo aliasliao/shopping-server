@@ -173,7 +173,7 @@ router
         let goodsId = decodeURI(ctx.params.goodsId)
         let i = 0
         for (let c in goodsId) {
-            console.log(i++, c)
+            console.log(i++, goodsId.charAt(c))
         }
         console.log('end')
         goodsId = goodsId.slice(0, 8)  // TODO: hack here
