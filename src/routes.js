@@ -105,13 +105,14 @@ router
             ctx.body = 'no consumer logged in'
             //await next()
             //return
+            ctx.consumerId = 'user3821'  // TODO: consumerId from cookie here
         }
 
         let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM ' +
             '`consumer` WHERE `id`=?'
 
         try {
-            let [rows] = await ctx.conn.query(sql, ['user3821'])  // TODO: consumerId from cookie here
+            let [rows] = await ctx.conn.query(sql, ctx.consumerId)
             ctx.body = rows[0]
         } catch (err) {
             ctx.body = `[${err.code}] ${err.message}`
@@ -126,11 +127,21 @@ router
             ctx.body = 'no consumer logged in'
             //await next()
             //return
+            ctx.consumerId = 'user3821'  // TODO: consumerId from cookie here
         }
 
-        let formData = ctx.request.body  // TODO: check undefined field
+        let formData = ctx.request.body
 
-        let sql = 'INSERT `'
+        let sql = 'UPDATE `consumer` SET `name`=?, `phone`=?, `address`=?, `accountNum`=?, `freeLimit`=? WHERE `id`=?'
+        try {
+            let data = [formData.name, formData.phone, formData.address, formData.accountNum, formData.freeLimit, ctx.consumerId]
+            await ctx.conn.query(sql, data)
+            ctx.body = 'success'
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
+        await next()
     })
 
     // consumer fetch order list
