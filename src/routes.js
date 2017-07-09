@@ -170,7 +170,7 @@ router
 
     // consumer fetch goodsInfo with goods id
     .get('/consumer/goodsInfo/:goodsId', async (ctx, next) => {
-        let goodsId = ctx.params.goodsId
+        let goodsId = decodeURI(ctx.params.goodsId)
         console.log(goodsId.length)
         console.log(goodsId === 'good0000')
 
