@@ -103,9 +103,9 @@ router
     .get('/consumer/info', async (ctx, next) => {
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
-            //await next()
-            //return
-            ctx.consumerId = 'user3821'  // TODO: consumerId from cookie here
+            await next()
+            return
+            //ctx.consumerId = 'user3821'
         }
 
         let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM ' +
@@ -125,9 +125,9 @@ router
     .post('/consumer/modifyInfo', async (ctx, next) => {
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
-            //await next()
-            //return
-            ctx.consumerId = 'user3821'  // TODO: consumerId from cookie here
+            await next()
+            return
+            //ctx.consumerId = 'user3821'
         }
 
         let formData = ctx.request.body
@@ -166,6 +166,31 @@ router
         }
 
         await next()
+    })
+
+    // consumer fetch goodsInfo with goods id
+    .get('/consumer/goodsInfo/:goodsId', async (ctx, next) => {
+        let goodsId = ctx.params.goodsId
+
+        let sql = 'SELECT goods.name AS goodsName, goods.price AS goodsPrice, goods.imageUrl AS goodsImageUrl, merchant.name AS merchantName ' +
+            'FROM `goods` ' +
+            'INNER JOIN `merchant` ON goods.merchantId=merchant.id ' +
+            'WHERE goods.id=?'
+        console.log(sql)
+
+        try {
+            let [rows] = await ctx.conn.query(sql, [goodsId])
+            ctx.body = rows[0]
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
+        await next()
+    })
+
+    // consumer make order
+    .post('/consumer/makeOrder', async (ctx, next) => {
+
     })
 
 module.exports = router
