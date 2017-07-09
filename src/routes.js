@@ -176,7 +176,7 @@ router
             console.log(i++, goodsId.charAt(c))
         }
         console.log('end')
-        goodsId = goodsId.slice(0, 8)  // TODO: hack here
+        goodsId = goodsId.slice(1, 9)  // TODO: hack here
         console.log(goodsId.length)
         console.log(goodsId)
         console.log(goodsId === 'good0000')
