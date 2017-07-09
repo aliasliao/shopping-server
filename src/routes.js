@@ -171,6 +171,11 @@ router
     // consumer fetch goodsInfo with goods id
     .get('/consumer/goodsInfo/:goodsId', async (ctx, next) => {
         let goodsId = decodeURI(ctx.params.goodsId)
+        let i = 0
+        for (let c in goodsId) {
+            console.log(i++, c)
+        }
+        console.log('end')
         goodsId = goodsId.slice(0, 8)  // TODO: hack here
         console.log(goodsId.length)
         console.log(goodsId)
