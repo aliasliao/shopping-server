@@ -173,6 +173,7 @@ router
         let goodsId = decodeURI(ctx.params.goodsId)
         goodsId = goodsId.slice(0, 8)  // TODO: hack here
         console.log(goodsId.length)
+        console.log(goodsId)
         console.log(goodsId === 'good0000')
 
         let sql = 'SELECT goods.name AS goodsName, goods.price AS goodsPrice, goods.imageUrl AS goodsImageUrl, merchant.name AS merchantName ' +
