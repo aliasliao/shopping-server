@@ -132,9 +132,9 @@ router
 
         let formData = ctx.request.body
 
-        let sql = 'UPDATE `consumer` SET `name`=?, `phone`=?, `address`=?, `accountNum`=?, `freeLimit`=? WHERE `id`=?'
+        let sql = 'UPDATE `consumer` SET `name`=?, `imageUrl`=?, `phone`=?, `address`=?, `accountNum`=?, `freeLimit`=? WHERE `id`=?'
         try {
-            let data = [formData.name, formData.phone, formData.address, formData.accountNum, formData.freeLimit, ctx.consumerId]
+            let data = [formData.name, formData.imageUrl, formData.phone, formData.address, formData.accountNum, formData.freeLimit, ctx.consumerId]
             await ctx.conn.query(sql, data)
             ctx.body = 'success'
         } catch (err) {
