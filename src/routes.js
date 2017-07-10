@@ -220,10 +220,10 @@ router
                 moment().format('YYYY-MM-DD hh:mm:ss')
             ])
 
-            await ctx.conn.query(updateConsumerSql, [price, consumerId])
+            await ctx.conn.query(updateConsumerSql, [price, ctx.consumerId])
             await ctx.conn.query(updateMerchantSql, [price, merchantId])
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         await next()
