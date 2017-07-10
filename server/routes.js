@@ -199,10 +199,6 @@ router
         }
 
         let goodsId = decodeURI(ctx.params.goodsId)
-        console.log(goodsId.length)
-        for (let i in goodsId) {
-            console.log(i, goodsId.charAt(i))
-        }
 
         let getGoodsInfoSql = 'SELECT `merchantId`, `price` FROM `goods` WHERE `id`=?'
         let getConsumerInfoSql = 'SELECT `money`, `freeLimit` FROM `consumer` WHERE `id`=?'
