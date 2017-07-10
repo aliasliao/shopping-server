@@ -49,7 +49,7 @@ router
 
             result = await ctx.conn.query(sql, data)
         } catch(err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         let maxAge = moment.duration(3, 'hours').asMilliseconds()
@@ -77,7 +77,7 @@ router
         try {
             ;[rows] = await ctx.conn.query(sql, [formData.name])
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         let maxAge = moment.duration(3, 'hours').asMilliseconds()
@@ -114,7 +114,7 @@ router
             let [rows] = await ctx.conn.query(sql, ctx.consumerId)
             ctx.body = rows[0]
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         await next()
@@ -136,7 +136,7 @@ router
             await ctx.conn.query(sql, data)
             ctx.body = 'success'
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         await next()
@@ -165,7 +165,7 @@ router
             })
             ctx.body = rows
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         await next()
@@ -184,7 +184,7 @@ router
             let [rows] = await ctx.conn.query(sql, [goodsId])
             ctx.body = rows[0]
         } catch (err) {
-            ctx.body = `[${err.code}] ${err.message}`
+            ctx.body = `${err.message}`
         }
 
         await next()
@@ -200,33 +200,47 @@ router
 
         let goodsId = decodeURI(ctx.params.goodsId)
         console.log(goodsId.length)
-        console.log(goodsId === 'good0000')
         for (let i in goodsId) {
             console.log(i, goodsId.charAt(i))
         }
 
         let getGoodsInfoSql = 'SELECT `merchantId`, `price` FROM `goods` WHERE `id`=?'
+        let getConsumerInfoSql = 'SELECT `money`, `freeLimit` FROM `consumer` WHERE `id`=?'
         let updateOrderSql = 'INSERT INTO `order` ' +
             '(`id`, `consumerId`, `goodsId`, `merchantId`, `time`) ' +
             'VALUES (?, ?, ?, ?, ?)'
-        let updateConsumerSql = 'UPDATE `consumer` SET `money`=`money`-? WHERE `id`=?'
+        let updateConsumerSql = 'UPDATE `consumer` SET `money`=? WHERE `id`=?'
         let updateMerchantSql = 'UPDATE `merchant` SET `money`=`money`+? WHERE `id`=?'
 
         try {
             let [goodsRows] = await ctx.conn.query(getGoodsInfoSql, [goodsId])
             let merchantId = goodsRows[0].merchantId
-            let price = goodsRows[0].price
+            let goodsPrice = goodsRows[0].price
 
-            await ctx.conn.query(updateOrderSql, [
-                'orde' + utils.randomString(4, '1234567890'),
-                ctx.consumerId,
-                goodsId,
-                merchantId,
-                moment().format('YYYY-MM-DD hh:mm:ss')
-            ])
+            let [consumerRows] = await ctx.conn.query(getConsumerInfoSql, [ctx.consumerId])
+            let consumerMoney = consumerRows.money
+            let consumerFreeLImit = consumerRows.freeLimit
 
-            await ctx.conn.query(updateConsumerSql, [price, ctx.consumerId])
-            await ctx.conn.query(updateMerchantSql, [price, merchantId])
+            if (goodsPrice > consumerMoney) {
+                ctx.body = '账户余额不足，请即时充值！'
+            }
+            else if (goodsPrice > consumerFreeLImit) {
+                ctx.body = '商品价格超过免密额度，请谨慎购买！'
+            }
+            else {
+                await ctx.conn.query(updateOrderSql, [
+                    'orde' + utils.randomString(4, '1234567890'),
+                    ctx.consumerId,
+                    goodsId,
+                    merchantId,
+                    moment().format('YYYY-MM-DD hh:mm:ss')
+                ])
+
+                await ctx.conn.query(updateConsumerSql, [consumerMoney-goodsPrice, ctx.consumerId])
+                await ctx.conn.query(updateMerchantSql, [goodsPrice, merchantId])
+
+                ctx.body = '下单成功！'
+            }
         } catch (err) {
             ctx.body = `${err.message}`
         }
