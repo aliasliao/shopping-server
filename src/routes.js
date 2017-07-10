@@ -218,8 +218,8 @@ router
             let goodsPrice = goodsRows[0].price
 
             let [consumerRows] = await ctx.conn.query(getConsumerInfoSql, [ctx.consumerId])
-            let consumerMoney = consumerRows.money
-            let consumerFreeLImit = consumerRows.freeLimit
+            let consumerMoney = consumerRows[0].money
+            let consumerFreeLImit = consumerRows[0].freeLimit
 
             if (goodsPrice > consumerMoney) {
                 ctx.body = '账户余额不足，请即时充值！'
