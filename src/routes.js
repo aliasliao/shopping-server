@@ -191,7 +191,7 @@ router
     })
 
     // consumer make order
-    .post('/consumer/makeOrder/:goodsId', async (ctx, next) => {
+    .get('/consumer/makeOrder/:goodsId', async (ctx, next) => {
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
             await next()
