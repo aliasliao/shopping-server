@@ -225,7 +225,7 @@ router
                 ctx.body = '账户余额不足，请即时充值！'
             }
             else if (goodsPrice > consumerFreeLImit) {
-                ctx.body = '商品价格超过免密额度，请谨慎购买！'
+                ctx.body = '商品价格超过免密额度！'
             }
             else {
                 await ctx.conn.query(updateOrderSql, [
