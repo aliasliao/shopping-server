@@ -199,6 +199,10 @@ router
         }
 
         let goodsId = decodeURI(ctx.params.goodsId)
+        console.log(goodsId.length)
+        for (let i in goodsId) {
+            console.log(i, goodsId.charAt(i))
+        }
 
         let getGoodsInfoSql = 'SELECT `merchantId`, `price` FROM `goods` WHERE `id`=?'
         let updateOrderSql = 'INSERT INTO `order` ' +
