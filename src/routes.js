@@ -146,9 +146,8 @@ router
     .get('/consumer/order', async (ctx, next) => {
         if (ctx.consumerId === undefined) {
             ctx.body = 'no consumer logged in'
-            //await next()
-            //return
-            ctx.consumerId = 'user2090'
+            await next()
+            return
         }
 
         let sql = 'SELECT order.id, order.time, order.state, goods.name AS goodsName, goods.imageUrl AS goodsImageUrl, goods.price AS goodsPrice, merchant.name AS merchantName ' +
@@ -157,7 +156,6 @@ router
             'INNER JOIN `goods` ON order.goodsId=goods.id ' +
             'WHERE order.consumerId=? ' +
             'ORDER BY order.time DESC'
-        console.log(sql)
 
         try {
             let [rows] = await ctx.conn.query(sql, [ctx.consumerId])
