@@ -229,7 +229,7 @@ router
                     ctx.consumerId,
                     goodsId,
                     merchantId,
-                    moment().format('YYYY-MM-DD hh:mm:ss')
+                    moment().format('YYYY-MM-DD HH:mm:ss')  // HH means 24 hour time, hh means 12 hour time.
                 ])
 
                 await ctx.conn.query(updateConsumerSql, [consumerMoney-goodsPrice, ctx.consumerId])

@@ -2,5 +2,5 @@
 
 node_modules/
 .idea/
-src/DATABASE.js
+/src/DATABASE.js
 /src/NEWSDATA.js
