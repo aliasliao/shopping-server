@@ -176,7 +176,6 @@ router
             'FROM `goods` ' +
             'INNER JOIN `merchant` ON goods.merchantId=merchant.id ' +
             'WHERE goods.id=?'
-        console.log(sql)
 
         try {
             let [rows] = await ctx.conn.query(sql, [goodsId])
@@ -189,8 +188,42 @@ router
     })
 
     // consumer make order
-    .post('/consumer/makeOrder', async (ctx, next) => {
+    .post('/consumer/makeOrder/:goodsId', async (ctx, next) => {
+        if (ctx.consumerId === undefined) {
+            ctx.body = 'no consumer logged in'
+            await next()
+            return
+        }
 
+        let goodsId = decodeURI(ctx.params.goodsId)
+
+        let getGoodsInfoSql = 'SELECT `merchantId`, `price` FROM `goods` WHERE `id`=?'
+        let updateOrderSql = 'INSERT INTO `order` ' +
+            '(`id`, `consumerId`, `goodsId`, `merchantId`, `time`) ' +
+            'VALUES (?, ?, ?, ?, ?)'
+        let updateConsumerSql = 'UPDATE `consumer` SET `money`=`money`-? WHERE `id`=?'
+        let updateMerchantSql = 'UPDATE `merchant` SET `money`=`money`+? WHERE `id`=?'
+
+        try {
+            let [goodsRows] = await ctx.conn.query(getGoodsInfoSql, [goodsId])
+            let merchantId = goodsRows[0].merchantId
+            let price = goodsRows[0].price
+
+            await ctx.conn.query(updateOrderSql, [
+                'orde' + utils.randomString(4, '1234567890'),
+                ctx.consumerId,
+                goodsId,
+                merchantId,
+                moment().format('YYYY-MM-DD hh:mm:ss')
+            ])
+
+            await ctx.conn.query(updateConsumerSql, [price, consumerId])
+            await ctx.conn.query(updateMerchantSql, [price, merchantId])
+        } catch (err) {
+            ctx.body = `[${err.code}] ${err.message}`
+        }
+
+        await next()
     })
 
 module.exports = router
