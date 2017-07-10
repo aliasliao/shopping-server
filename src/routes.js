@@ -105,7 +105,6 @@ router
             ctx.body = 'no consumer logged in'
             await next()
             return
-            //ctx.consumerId = 'user3821'
         }
 
         let sql = 'SELECT `name`, `imageUrl`, `phone`, `address`, `accountNum`, `money`, `freeLimit` FROM ' +
@@ -127,7 +126,6 @@ router
             ctx.body = 'no consumer logged in'
             await next()
             return
-            //ctx.consumerId = 'user3821'
         }
 
         let formData = ctx.request.body
