@@ -200,6 +200,7 @@ router
 
         let goodsId = decodeURI(ctx.params.goodsId)
         console.log(goodsId.length)
+        console.log(goodsId === 'good0000')
         for (let i in goodsId) {
             console.log(i, goodsId.charAt(i))
         }
