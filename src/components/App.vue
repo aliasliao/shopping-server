@@ -3,16 +3,16 @@
         <el-menu default-active="/homepage/login" theme="dark" mode="horizontal" router>
             <el-row>
                 <el-col :lg="{span:6, offset:2}">
-                    <el-menu-item @click="changeLog" index="/homepage/login">
+                    <el-menu-item index="/homepage/login">
                         <span class="logo">快捷购物</span>商户中心
                     </el-menu-item>
                 </el-col>
                 <el-col v-if="!loggedIn" :lg="{span:4, offset:12}">
-                    <el-menu-item v-if="homepageLogin" index="/homepage/login">
-                        <el-button type="warning">切换到注册</el-button>
+                    <el-menu-item index="/homepage/login" v-if="homepageLogin" >
+                        <el-button @click="switchHomepageLogin" type="warning">切换到注册</el-button>
                     </el-menu-item>
                     <el-menu-item index="/homepage/register" v-else>
-                        <el-button type="success">切换到登录</el-button>
+                        <el-button @click="switchHomepageLogin" type="success">切换到登录</el-button>
                     </el-menu-item>
                 </el-col>
                 <el-col v-else :lg="{span:6, offset:10}">
@@ -45,8 +45,11 @@
             }
         },
         methods: {
-            changeLog () {
-                this.$store.commit('changeLogState')
+//            changeLog () {
+//                this.$store.commit('changeLogState')
+//            },
+            switchHomepageLogin () {
+                this.homepageLogin = !this.homepageLogin
             },
             logOut () {}
         }

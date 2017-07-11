@@ -25,7 +25,18 @@ const store = new Vuex.Store({
 })
 
 const router = new VueRouter({routes: [
-    { path: '/homepage/:action', component: Homepage, meta: {requiresAuth:false} }
+    {
+        path: '/',
+        redirect: to => {
+            if (store.state.loggedIn) { return '/order' }
+            else { return '/homepage/login' }
+        }
+    },
+    {
+        path: '/homepage/:action',
+        component: Homepage,
+        meta: {requiresAuth:false},
+    }
 ]})
 
 const app = new Vue({

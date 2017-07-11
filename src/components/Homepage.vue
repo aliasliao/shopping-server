@@ -32,11 +32,12 @@
             </el-col>
             <el-col :lg="{span:9}">
                 <el-row>
-                    <el-col :lg="{span:15, offset:0}">
-                        <el-card v-if="login" class="loginPanel">
+                    <el-col :lg="{span:18, offset:0}">
+                        <el-card class="panel loginPanel" v-if="showLogin">
                             <el-form class="form"
-                                     ref="homepageLogin"
+                                     ref="loginForm"
                                      label-width="5em"
+                                     key="loginForm"
                                      :model="loginForm"
                                      :rules="loginRules">
                                 <el-form-item label="商家名" prop="name">
@@ -46,15 +47,16 @@
                                     <el-input type="password" v-model="loginForm.password"></el-input>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-button type="primary" @click="submitForm">登录</el-button>
+                                    <el-button type="primary" @click="submitLoginForm">登录</el-button>
                                     <el-button @click="resetForm('loginForm')">重置</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-card>
-                        <el-card class="registerPanel" v-else>
+                        <el-card class="panel registerPanel" v-else>
                             <el-form class="form"
-                                     ref="homepageRegister"
+                                     ref="registerForm"
                                      label-width="5em"
+                                     key="registerForm"
                                      :model="registerForm"
                                      :rules="registerRules">
                                 <el-form-item label="商家名" prop="name">
@@ -63,17 +65,18 @@
                                 <el-form-item label="密码" prop="password">
                                     <el-input type="password" v-model="registerForm.password"></el-input>
                                 </el-form-item>
-                                <el-form-item label="确认密码" prop="password">
+                                <el-form-item label="确认密码" prop="confirmPassword">
                                     <el-input type="password" v-model="registerForm.confirmPassword"></el-input>
                                 </el-form-item>
                                 <el-form-item label="联系电话" prop="phone">
                                     <el-input v-model="registerForm.phone"></el-input>
                                 </el-form-item>
                                 <el-form-item label="电子邮箱" prop="email">
-                                    <el-input v-model="registerForm.email"></el-input>
+                                    <el-input type="email" v-model="registerForm.email"></el-input>
                                 </el-form-item>
-                                <el-form-item label="地址" prop="address">
-                                    <el-input v-model="registerForm.address"></el-input>
+                                <el-form-item>
+                                    <el-button type="primary" @click="submitRegisterForm">注册</el-button>
+                                    <el-button @click="resetForm('registerForm')">重置</el-button>
                                 </el-form-item>
                             </el-form>
                         </el-card>
@@ -87,7 +90,6 @@
 <script>
     export default {
         data () {
-            // TODO: refactor these func to a file
             let validateName = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请输入商家名'))
@@ -110,6 +112,51 @@
                     callback()
                 }
             }
+            let validateConfirmPassword = (rule, value, callback) => {
+                debugger
+                if (value === '') {
+                    callback(new Error('请再次输入密码'))
+                }
+                else if (value !== this.registerForm.password) {
+                    callback(new Error('两次输入的密码不一致！'))
+                }
+                else {
+                    callback()
+                }
+            }
+            let validatePhone = (rule, value, callback) => {
+                let pattern = /^\d+-?\d+$/
+
+                if (value === '') {
+                    callback(new Error('请输入电话号码'))
+                }
+                else if (pattern.test(value) === false) {
+                    callback(new Error('电话号码不合法！'))
+                }
+                else if (value.length < 8 || value.length > 16) {
+                    callback(new Error('号码长度在8到16位之间'))
+                }
+                else {
+                    callback()
+                }
+            }
+            let validateEmail = (rule, value, callback) => {
+                let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+                if (value === '') {
+                    callback(new Error('请输入电子邮箱地址'))
+                }
+                else if (pattern.test(value) === false) {
+                    callback(new Error('电子邮箱地址不合法！'))
+                }
+                else if(value.length > 128) {
+                    callback(new Error('电子邮箱地址不能超过128位'))
+                }
+                else {
+                    callback()
+                }
+            }
+
 
 
             return {
@@ -123,9 +170,8 @@
                     confirmPassword: '',
                     phone: '',
                     email: '',
-                    address: '',
                 },
-                login: true,
+                showLogin: true,
                 loginRules: {
                     name: [
                         {validator: validateName, trigger: 'blur'}
@@ -134,13 +180,39 @@
                         {validator: validatePassword, trigger: 'blur'}
                     ],
                 },
-                registerRules: {}
+                registerRules: {
+                    name: [
+                        {validator: validateName, trigger: 'blur'}
+                    ],
+                    password: [
+                        {validator: validatePassword, trigger: 'blur'}
+                    ],
+                    confirmPassword: [
+                        {validator: validateConfirmPassword, trigger: 'blur'}
+                    ],
+                    phone: [
+                        {validator: validatePhone, trigger: 'blur'}
+                    ],
+                    email: [
+                        {validator: validateEmail, trigger: 'blur'}
+                    ]
+                },
+
 
             }
         },
         methods: {
-            submitForm () {
-                console.log(this.form)
+            submitLoginForm () {
+                console.log(JSON.stringify(this.loginForm))  // TODO: submit to server
+                this.$refs.loginForm.validate(valid => {
+                    console.log(valid)
+                })
+            },
+            submitRegisterForm () {
+                console.log(JSON.stringify(this.registerForm))
+                this.$refs.registerForm.validate(valid => {
+                    console.log(valid)
+                })
             },
             resetForm (formName) {
                 this.$refs[formName].resetFields()
@@ -148,7 +220,7 @@
         },
         watch: {
             '$route' () {
-                this.login = $route.params.action === 'login'
+                this.showLogin = this.$route.params.action === 'login'
             }
         }
     }
@@ -159,6 +231,7 @@
         background: url(../image/header-bg.jpg) no-repeat bottom;
         background-size: cover;
         overflow: hidden;
+        padding-top: 2em;
     }
     .slogan {
         text-align: center;
@@ -183,15 +256,21 @@
             }
         }
     }
+    .panel {
+        background-color: rgba(255,255,255,0.8);
+        border-width: 0;
+    }
     .loginPanel {
         margin-top: 7em;
         margin-bottom: 10em;
-        background-color: rgba(255,255,255,0.8);
-        border-width: 0;
-        .form {
-            margin-top: 3em;
-            margin-bottom: 3em;
-            margin-right: 1.5em;
-        }
+    }
+    .registerPanel {
+        margin-top: 2em;
+        margin-bottom: 4em;
+    }
+    .form {
+        margin-top: 3em;
+        margin-bottom: 3em;
+        margin-right: 1.5em;
     }
 </style>
