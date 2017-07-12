@@ -325,6 +325,34 @@ router
     })
 
 
+    // merchant check state
+    .get('/merchant/checkState', async (ctx, next) => {
+        let body = {}
+
+        if (ctx.merchantId === undefined) {
+            body.status = 'not loggedIn'
+        }
+        else {
+            body.status = 'loggedIn'
+
+            let sql = 'SELECT `name`, `imageUrl` FROM `merchant` WHERE `id`=?'
+            try {
+                let [rows] = await ctx.conn.query(sql, [ctx.merchantId])
+
+                body.id = ctx.merchantId
+                body.name = rows[0].name
+                body.imageUrl = rows[0].imageUrl
+            } catch (err) {
+                body.status = err.message
+            }
+        }
+
+        ctx.body = body
+
+        await next()
+    })
+
+
     // merchant logout
     .get('/merchant/logout', async (ctx, next) => {
         if (ctx.merchantId !== undefined) {

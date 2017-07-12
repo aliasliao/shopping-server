@@ -46,7 +46,7 @@ app.use(async (ctx) => {
         if (ctx.body !== undefined)
             ctx.path = JSON.stringify(ctx.body).slice(0, 80) + '...'
         else
-            ctx.path = 'not found'
+            ctx.path = 'path not found'
     }
 
     ctx.log += decodeURI(ctx.path)

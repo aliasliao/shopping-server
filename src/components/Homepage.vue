@@ -97,18 +97,22 @@
         beforeRouteEnter (to, from, next) {
             axios.get('/merchant/checkState').then(res => {
                 if (res.data.status === 'loggedIn') {
-                    this.$store.commit('login')
-                    this.$store.commit('setInfo', {
-                        id: res.data.id,
-                        name: this.loginForm.name,
-                        imageUrl: res.data.imageUrl
-                    })
+                    let cusPath = (vm, path) => {
+                        vm.$store.commit('login')
+                        vm.$store.commit('setInfo', {
+                            id: res.data.id,
+                            name: res.data.name,
+                            imageUrl: res.data.imageUrl
+                        })
+
+                        return path
+                    }
 
                     if (to.query.redirect !== undefined) {
-                        next(to.query.redirect)
+                        next(vm => cusPath(vm, to.query.redirect))
                     }
                     else {
-                        next('/orders')
+                        next(vm => cusPath(vm, '/orders'))
                     }
                 }
                 else {
