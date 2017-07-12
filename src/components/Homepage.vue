@@ -357,11 +357,9 @@
     }
     .loginPanel {
         margin-top: 7em;
-        /*margin-bottom: 10em;*/
     }
     .registerPanel {
         margin-top: 2em;
-        /*margin-bottom: 4em;*/
     }
     .form {
         margin-top: 3em;

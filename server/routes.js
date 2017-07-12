@@ -383,7 +383,8 @@ router
         try {
             let [rows] = await ctx.conn.query(sql, [ctx.merchantId])
             rows.map(item => {
-                item.time = moment(item.time).locale('zh-cn').fromNow()
+                item.parsedTime = moment(item.time).locale('zh-cn').fromNow()
+                item.time = moment(item.time).format('YYYY-MM-DD HH:mm:ss')
                 return item
             })
             ctx.body = rows
