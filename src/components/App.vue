@@ -45,9 +45,6 @@
             }
         },
         methods: {
-//            changeLog () {
-//                this.$store.commit('changeLogState')
-//            },
             switchHomepageLogin () {
                 this.homepageLogin = !this.homepageLogin
             },

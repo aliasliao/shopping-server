@@ -68,6 +68,9 @@
                                 <el-form-item label="确认密码" prop="confirmPassword">
                                     <el-input type="password" v-model="registerForm.confirmPassword"></el-input>
                                 </el-form-item>
+                                <el-form-item label="银行卡号" prop="accountNum">
+                                    <el-input v-model="registerForm.accountNum"></el-input>
+                                </el-form-item>
                                 <el-form-item label="联系电话" prop="phone">
                                     <el-input v-model="registerForm.phone"></el-input>
                                 </el-form-item>
@@ -88,6 +91,8 @@
 </template>
 
 <script>
+    import axios from 'axios'
+
     export default {
         data () {
             let validateName = (rule, value, callback) => {
@@ -119,6 +124,19 @@
                 }
                 else if (value !== this.registerForm.password) {
                     callback(new Error('两次输入的密码不一致！'))
+                }
+                else {
+                    callback()
+                }
+            }
+            let validateAccountNum = (rule, value, callback) => {
+                let pattern = /^\d{16,19}$/
+
+                if (value === '') {
+                    callback(new Error('请输入银行卡号'))
+                }
+                else if (pattern.test(value) === false) {
+                    callback(new Error('银行卡号必须为16到19位的数字！'))
                 }
                 else {
                     callback()
@@ -168,6 +186,7 @@
                     name: '',
                     password: '',
                     confirmPassword: '',
+                    accountNum: '',
                     phone: '',
                     email: '',
                 },
@@ -190,6 +209,9 @@
                     confirmPassword: [
                         {validator: validateConfirmPassword, trigger: 'blur'}
                     ],
+                    accountNum: [
+                        {validator: validateAccountNum, trigger: 'blur'}
+                    ],
                     phone: [
                         {validator: validatePhone, trigger: 'blur'}
                     ],
@@ -206,6 +228,24 @@
                 console.log(JSON.stringify(this.loginForm))  // TODO: submit to server
                 this.$refs.loginForm.validate(valid => {
                     console.log(valid)
+                    axios.past('/merchant/login', this.loginForm).then(res => {
+                        if (res.data === 'success') {
+                            this.$notify.success({
+                                title: '登录成功',
+                                message: `欢迎回来，商家 ${this.loginForm.name}`,
+                                offset: 100
+                            })
+                            this.$store.commit('login')
+                            this.$router.push('/order')  // TODO: store merchantId here
+                        }
+                        else {
+                            this.$notify.error({
+                                title: '登录失败',
+                                message: res.data,
+                                offset: 100
+                            })
+                        }
+                    })
                 })
             },
             submitRegisterForm () {

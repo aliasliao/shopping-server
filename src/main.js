@@ -18,8 +18,11 @@ const store = new Vuex.Store({
         loggedIn: false
     },
     mutations: {
-        changeLogState (state) {
-            state.loggedIn = !state.loggedIn
+        login (state) {
+            state.loggedIn = true
+        },
+        logout (state) {
+            state.loggedIn = false
         }
     }
 })
