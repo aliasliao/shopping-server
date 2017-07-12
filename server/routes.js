@@ -150,7 +150,7 @@ router
             return
         }
 
-        let sql = 'SELECT order.id, order.time, order.state, goods.id AS goodsId,t s goods.name AS goodsName, goods.imageUrl AS goodsImageUrl, goods.price AS goodsPrice, merchant.name AS merchantName ' +
+        let sql = 'SELECT order.id, order.time, order.state, goods.id AS goodsId, goods.name AS goodsName, goods.imageUrl AS goodsImageUrl, goods.price AS goodsPrice, merchant.name AS merchantName ' +
             'FROM `order` ' +
             'INNER JOIN `merchant` ON order.merchantId=merchant.id ' +
             'INNER JOIN `goods` ON order.goodsId=goods.id ' +
@@ -243,5 +243,227 @@ router
 
         await next()
     })
+
+    // merchant register
+    .post('/merchant/register', async (ctx, next) => {
+        let formData = ctx.request.body
+        let sql = 'INSERT INTO `merchant` (`id`, `name`, `password`, `email`, `phone`, `accountNum`) ' +
+            'VALUES (?, ?, ?, ?, ?, ?)'
+
+        let data, result
+        try {
+            data = [
+                'merc' + utils.randomString(4, '1234567890'),
+                formData.name,
+                utils.md5(formData.password),
+                formData.email,
+                formData.phone,
+                formData.accountNum,
+            ]
+
+            result = await ctx.conn.query(sql, data)
+        } catch (err) {
+            ctx.body.status = err.message
+        }
+
+        let maxAge = moment.duration(3, 'hours').asMilliseconds()
+        if (result) {
+            ctx.body.status = 'success'
+            ctx.body.id = data[0]
+            ctx.cookies.set('merchantId', data[0], {maxAge: maxAge})
+                .set('hp', data[2], {maxAge: maxAge})
+        }
+
+        await next()
+    })
+
+    // merchant login
+    .post('/merchant/login', async (ctx, next) => {
+        let formData = ctx.request.body
+        let sql = 'SELECT `id`, `password`, `imageUrl`, FROM `merchant` WHERE `name`=?'
+
+        if (formData.name === undefined || formData.password === undefined) {
+            ctx.body.status = '用户信息不完整'
+            await next()
+            return
+        }
+
+        let rows
+        try {
+            ;[rows] = await ctx.conn.query(sql, [formData.name])
+        } catch (err) {
+            ctx.body.status = err.message
+        }
+
+        let maxAge = moment.duration(3, 'hours').asMilliseconds()
+        if (rows.length > 0) {
+            let hp = utils.md5(formData.password)
+            if (rows[0].password === hp) {
+                ctx.body.status = 'success'
+                ctx.body.id = rows[0].id
+                ctx.body.imageUrl = rows[0].imageUrl
+                ctx.cookies.set('merchantId', rows[0].id, {maxAge: maxAge})
+                    .set('hp', hp, {maxAge: maxAge})
+            }
+            else {
+                ctx.body.status = '密码错误！'
+            }
+        }
+        else {
+            ctx.body.status = '商家名不存在！'
+        }
+
+        await next()
+    })
+
+
+    // merchant logout
+    .get('/merchant/logout', async (ctx, next) => {
+        if (ctx.merchantId !== undefined) {
+            ctx.cookies.set('merchantId')
+            ctx.body = 'success'
+        }
+        else {
+            ctx.body = '没有商家登录'
+        }
+    })
+
+    // merchant fetch order list
+    .get('/merchant/order', async (ctx, next) => {
+        if (ctx.merchantId === undefined) {
+            ctx.body = 'no merchant logged in'
+            await next()
+            return
+        }
+
+        // id, time, state, goodsId, goodsName, goodsImageUrl, goodsPrice, consumerId
+        let sql = 'SELECT order.id, order.time, order.state, goods.id AS goodsId, goods.name AS goodsName, goods.imageUrl AS goodsImageUrl, goods.price AS goodsPrice, consumer.id AS consumerId ' +
+            'FROM `order` ' +
+            'INNER JOIN `consumer` ON order.consumerId=consumer.id ' +
+            'INNER JOIN `goods` ON order.goodsId=goods.id ' +
+            'WHERE order.merchantId=? ' +
+            'ORDER BY order.time DESC'
+
+        try {
+            let [rows] = await ctx.conn.query(sql, [ctx.merchantId])
+            rows.map(item => {
+                item.time = moment(item.time).locale('zh-cn').fromNow()
+                return item
+            })
+            ctx.body = rows
+        } catch (err) {
+            ctx.body = err.message
+        }
+
+        await next()
+    })
+
+    // merchant modify order state
+    .post('/merchant/updateOrder', async (ctx, next) => {
+        if (ctx.merchantId === undefined) {
+            ctx.body = 'no merchant logged in'
+            await next()
+            return
+        }
+
+        let formData = ctx.request.body
+
+        let sql = 'UPDATE `order` SET `state`=? WHERE `id`=?'
+
+        try {
+            await ctx.conn.query(sql, [formData.state, formData.id])
+            ctx.body = 'success'
+        } catch (err) {
+            ctx.body = err.message
+        }
+    })
+
+    // merchant fetch info
+    .get('/merchant/info', async (ctx, next) => {
+        if (ctx.merchantId === undefined) {
+            ctx.body = 'no merchant logged in'
+            await next()
+            return
+        }
+
+        let sql = 'SELECT * FROM `merchant` WHERE `id`=?'  // TODO: password!
+
+        try {
+            let [rows] = await ctx.conn.query(sql, [ctx.merchantId])
+            ctx.body = rows[0]
+        } catch (err) {
+            ctx.body = err.message
+        }
+
+        await next()
+    })
+
+    // merchant modify info
+    .post('/merchant/modifyInfo', async (ctx, next) => {
+        if (ctx.merchantId === undefined) {
+            ctx.body = 'no merchant logged in'
+            await next()
+            return
+        }
+
+        let formData = ctx.request.body
+
+        let sql = 'UPDATE `merchant` SET `password`=?, `accountNum`=?, `imageUrl`=?, `email`=?, `phone`=? ' +
+            'WHERE `id`=?'
+
+        try {
+            let data = [
+                utils.md5(formData.password),
+                formData.accountNum,
+                formData.imageUrl,
+                formData.email,
+                formData.phone,
+                ctx.merchantId
+            ]
+
+            await ctx.conn.query(sql, data)
+            ctx.body = 'success'
+        } catch (err) {
+            ctx.body = err.message
+        }
+
+        await next()
+    })
+
+    // merchant add goods
+    .post('/merchant/addGoods', async (ctx, next) => {
+        if (ctx.merchantId === undefined) {
+            ctx.body = 'no merchant logged in'
+            await next()
+            return
+        }
+
+        let formData = ctx.request.body
+
+        let sql = 'INSERT INTO `goods` (`id`, `merchantId`, `name`, `price`, `imageUrl`) ' +
+            'VALUES (?, ?, ?, ?, ?)'
+
+        try {
+            let data = [
+                'good' + utils.randomString(4, '1234567890'),
+                ctx.merchantId,
+                formData.name,
+                formData.price,
+                formData.imageUrl
+            ]
+
+            await ctx.conn.query(sql, data)
+            ctx.body = 'success'
+        } catch (err) {
+            ctx.body = err.message
+        }
+
+        await next()
+    })
+
+    // merchant modify goods  // TODO: finish this if good mood
+
+
+
 
 module.exports = router

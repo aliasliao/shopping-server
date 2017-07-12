@@ -48,7 +48,26 @@
             switchHomepageLogin () {
                 this.homepageLogin = !this.homepageLogin
             },
-            logOut () {}
+            logOut () {
+                axios.get('/merchant/logout').then(res => {
+                    if (res.data === 'success') {
+                        this.$notify.success({
+                            title: '注销成功',
+                            message: '账户注销成功，请重新登录',
+                            offset: 100
+                        })
+                        this.$store.commit('logout')
+                        this.$router.push('/')
+                    }
+                    else {
+                        this.$notify.warning({
+                            title: '注销失败',
+                            message: res.data,
+                            offset: 100
+                        })
+                    }
+                }).catch(err => { console.log(err) })
+            }
         }
     }
 </script>

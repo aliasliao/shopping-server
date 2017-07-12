@@ -130,13 +130,13 @@
                 }
             }
             let validateAccountNum = (rule, value, callback) => {
-                let pattern = /^\d{16,19}$/
+                let pattern = /^\d{8,19}$/
 
                 if (value === '') {
                     callback(new Error('请输入银行卡号'))
                 }
                 else if (pattern.test(value) === false) {
-                    callback(new Error('银行卡号必须为16到19位的数字！'))
+                    callback(new Error('银行卡号必须为8位到19位的数字！'))
                 }
                 else {
                     callback()
@@ -225,33 +225,69 @@
         },
         methods: {
             submitLoginForm () {
-                console.log(JSON.stringify(this.loginForm))  // TODO: submit to server
+                console.log(JSON.stringify(this.loginForm))
                 this.$refs.loginForm.validate(valid => {
-                    console.log(valid)
-                    axios.past('/merchant/login', this.loginForm).then(res => {
-                        if (res.data === 'success') {
-                            this.$notify.success({
-                                title: '登录成功',
-                                message: `欢迎回来，商家 ${this.loginForm.name}`,
-                                offset: 100
-                            })
-                            this.$store.commit('login')
-                            this.$router.push('/order')  // TODO: store merchantId here
-                        }
-                        else {
-                            this.$notify.error({
-                                title: '登录失败',
-                                message: res.data,
-                                offset: 100
-                            })
-                        }
-                    })
+                    if (valid) {
+                        axios.post('/merchant/login', this.loginForm).then(res => {
+                            if (res.data.status === 'success') {
+                                this.$notify.success({
+                                    title: '登录成功',
+                                    message: `欢迎回来，${this.loginForm.name}`,
+                                    offset: 100
+                                })
+                                this.$store.commit('login')  // TODO: try to get id from cookie
+                                this.$store.commit('setInfo', {
+                                    id: res.data.id,
+                                    name: this.loginForm.name,
+                                    imageUrl: res.data.imageUrl
+                                })
+                                this.$router.push('/order')
+                            }
+                            else {
+                                this.$notify.error({
+                                    title: '登录失败',
+                                    message: res.data.status,
+                                    offset: 100
+                                })
+                            }
+                        }).catch(err => { console.log(err) })
+                    }
+                    else {
+                        console.log('login form invalid')
+                    }
                 })
             },
             submitRegisterForm () {
                 console.log(JSON.stringify(this.registerForm))
                 this.$refs.registerForm.validate(valid => {
-                    console.log(valid)
+                    if (valid) {
+                        axios.post('/merchant/register', this.registerForm).then(res => {
+                            if (res.data.status === 'success') {
+                                this.$notify.success({
+                                    title: '注册成功',
+                                    message: `欢迎加入，${this.registerForm.name}`,
+                                    offset: 100
+                                })
+                                this.$store.commit('login')  // TODO: try to get id from cookie
+                                this.$store.commit('setInfo', {
+                                    id: res.data.id,
+                                    name: this.registerForm.name,
+                                    imageUrl: 'http://123.206.186.94:3000/image/face0.jpg'
+                                })
+                                this.$router.push('/order')
+                            }
+                            else {
+                                this.$notify.error({
+                                    title: '注册失败',
+                                    message: res.data.status,
+                                    offset: 100
+                                })
+                            }
+                        }).catch(err => { console.log(err) })
+                    }
+                    else {
+                        console.log('register form invalid')
+                    }
                 })
             },
             resetForm (formName) {

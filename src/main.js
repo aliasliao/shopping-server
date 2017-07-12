@@ -15,7 +15,12 @@ Vue.use(ElementUI)
 
 const store = new Vuex.Store({
     state: {
-        loggedIn: false
+        loggedIn: false,
+        info: {
+            id: null,
+            name: null,
+            imageUrl: null
+        }
     },
     mutations: {
         login (state) {
@@ -23,7 +28,13 @@ const store = new Vuex.Store({
         },
         logout (state) {
             state.loggedIn = false
-        }
+            state.info.id = null
+            state.info.name = null
+            state.info.imageUrl = null
+        },
+        setInfo (state, info) {
+            state.info = info
+        },
     }
 })
 
