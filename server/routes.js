@@ -250,6 +250,8 @@ router
         let sql = 'INSERT INTO `merchant` (`id`, `name`, `password`, `email`, `phone`, `accountNum`) ' +
             'VALUES (?, ?, ?, ?, ?, ?)'
 
+        let body = {}
+
         let data, result
         try {
             data = [
@@ -263,16 +265,18 @@ router
 
             result = await ctx.conn.query(sql, data)
         } catch (err) {
-            ctx.body.status = err.message
+            body.status = err.message
         }
 
         let maxAge = moment.duration(3, 'hours').asMilliseconds()
         if (result) {
-            ctx.body.status = 'success'
-            ctx.body.id = data[0]
+            body.status = 'success'
+            body.id = data[0]
             ctx.cookies.set('merchantId', data[0], {maxAge: maxAge})
                 .set('hp', data[2], {maxAge: maxAge})
         }
+
+        ctx.body = body
 
         await next()
     })
@@ -288,30 +292,34 @@ router
             return
         }
 
+        let body = {}
+
         let rows
         try {
             ;[rows] = await ctx.conn.query(sql, [formData.name])
         } catch (err) {
-            ctx.body.status = err.message
+            body.status = err.message
         }
 
         let maxAge = moment.duration(3, 'hours').asMilliseconds()
         if (rows.length > 0) {
             let hp = utils.md5(formData.password)
             if (rows[0].password === hp) {
-                ctx.body.status = 'success'
-                ctx.body.id = rows[0].id
-                ctx.body.imageUrl = rows[0].imageUrl
+                body.status = 'success'
+                body.id = rows[0].id
+                body.imageUrl = rows[0].imageUrl
                 ctx.cookies.set('merchantId', rows[0].id, {maxAge: maxAge})
                     .set('hp', hp, {maxAge: maxAge})
             }
             else {
-                ctx.body.status = '密码错误！'
+                body.status = '密码错误！'
             }
         }
         else {
-            ctx.body.status = '商家名不存在！'
+            body.status = '商家名不存在！'
         }
+
+        ctx.body = body
 
         await next()
     })

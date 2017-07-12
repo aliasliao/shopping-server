@@ -94,6 +94,28 @@
     import axios from 'axios'
 
     export default {
+        beforeRouteEnter (to, from, next) {
+            axios.get('/merchant/checkState').then(res => {
+                if (res.data.status === 'loggedIn') {
+                    this.$store.commit('login')
+                    this.$store.commit('setInfo', {
+                        id: res.data.id,
+                        name: this.loginForm.name,
+                        imageUrl: res.data.imageUrl
+                    })
+
+                    if (to.query.redirect !== undefined) {
+                        next(to.query.redirect)
+                    }
+                    else {
+                        next('/orders')
+                    }
+                }
+                else {
+                    next()
+                }
+            }).catch(err => { console.log(err) })
+        },
         data () {
             let validateName = (rule, value, callback) => {
                 if (value === '') {
@@ -118,7 +140,6 @@
                 }
             }
             let validateConfirmPassword = (rule, value, callback) => {
-                debugger
                 if (value === '') {
                     callback(new Error('请再次输入密码'))
                 }
@@ -241,7 +262,7 @@
                                     name: this.loginForm.name,
                                     imageUrl: res.data.imageUrl
                                 })
-                                this.$router.push('/order')
+                                this.$router.push('/orders')
                             }
                             else {
                                 this.$notify.error({
@@ -274,7 +295,7 @@
                                     name: this.registerForm.name,
                                     imageUrl: 'http://123.206.186.94:3000/image/face0.jpg'
                                 })
-                                this.$router.push('/order')
+                                this.$router.push('/orders')
                             }
                             else {
                                 this.$notify.error({
@@ -298,7 +319,7 @@
             '$route' () {
                 this.showLogin = this.$route.params.action === 'login'
             }
-        }
+        },
     }
 </script>
 

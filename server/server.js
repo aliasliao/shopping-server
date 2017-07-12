@@ -24,7 +24,7 @@ app.use(async (ctx, next) => {
     ctx.consumerId = ctx.cookies.get('consumerId')  // TODO: check password here
     ctx.merchantId = ctx.cookies.get('merchantId')
 
-    ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}  [${ctx.consumerId}]
+    ctx.log = `[${new Date().toLocaleTimeString()}] ${ctx.method} ${decodeURI(ctx.path)}    [${ctx.consumerId}] / [${ctx.merchantId}]
     [${ctx.request.headers['user-agent']}]
     ${JSON.stringify(ctx.request.body).slice(0,40)}... ==> `
 

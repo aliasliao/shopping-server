@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-default/index.css'
 
 import App from './components/App.vue'
 import Homepage from './components/Homepage.vue'
+import Orders from './components/Orders.vue'
 
 
 Vue.use(Vuex)
@@ -42,16 +43,37 @@ const router = new VueRouter({routes: [
     {
         path: '/',
         redirect: to => {
-            if (store.state.loggedIn) { return '/order' }
-            else { return '/homepage/login' }
+            return '/homepage/login'
         }
     },
     {
         path: '/homepage/:action',
         component: Homepage,
         meta: {requiresAuth:false},
+    },
+    {
+        path: '/orders',
+        component: Orders
     }
 ]})
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        if (!store.state.loggedIn) {
+            next({
+                path: '/homepage/login',
+                query: { redirect: to.fullPath }
+            })
+        }
+        else {
+            next()
+        }
+    }
+    else {
+        next()
+    }
+})
+
 
 const app = new Vue({
     el: '#app',
