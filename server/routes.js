@@ -284,7 +284,7 @@ router
     // merchant login
     .post('/merchant/login', async (ctx, next) => {
         let formData = ctx.request.body
-        let sql = 'SELECT `id`, `password`, `imageUrl`, FROM `merchant` WHERE `name`=?'
+        let sql = 'SELECT `id`, `password`, `imageUrl` FROM `merchant` WHERE `name`=?'
 
         if (formData.name === undefined || formData.password === undefined) {
             ctx.body.status = '用户信息不完整'

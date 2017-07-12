@@ -83,3 +83,5 @@ const app = new Vue({
         return h(App)
     }
 })
+
+export { store }

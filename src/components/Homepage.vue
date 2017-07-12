@@ -92,27 +92,24 @@
 
 <script>
     import axios from 'axios'
+    import { store } from '../main'
 
     export default {
         beforeRouteEnter (to, from, next) {
             axios.get('/merchant/checkState').then(res => {
                 if (res.data.status === 'loggedIn') {
-                    let cusPath = (vm, path) => {
-                        vm.$store.commit('login')
-                        vm.$store.commit('setInfo', {
-                            id: res.data.id,
-                            name: res.data.name,
-                            imageUrl: res.data.imageUrl
-                        })
-
-                        return path
-                    }
+                    store.commit('login')
+                    store.commit('setInfo', {
+                        id: res.data.id,
+                        name: res.data.name,
+                        imageUrl: res.data.imageUrl
+                    })
 
                     if (to.query.redirect !== undefined) {
-                        next(vm => cusPath(vm, to.query.redirect))
+                        next(to.query.redirect)
                     }
                     else {
-                        next(vm => cusPath(vm, '/orders'))
+                        next('/orders')
                     }
                 }
                 else {
@@ -258,7 +255,6 @@
                                 this.$notify.success({
                                     title: '登录成功',
                                     message: `欢迎回来，${this.loginForm.name}`,
-                                    offset: 100
                                 })
                                 this.$store.commit('login')  // TODO: try to get id from cookie
                                 this.$store.commit('setInfo', {
@@ -272,7 +268,6 @@
                                 this.$notify.error({
                                     title: '登录失败',
                                     message: res.data.status,
-                                    offset: 100
                                 })
                             }
                         }).catch(err => { console.log(err) })
@@ -291,7 +286,6 @@
                                 this.$notify.success({
                                     title: '注册成功',
                                     message: `欢迎加入，${this.registerForm.name}`,
-                                    offset: 100
                                 })
                                 this.$store.commit('login')  // TODO: try to get id from cookie
                                 this.$store.commit('setInfo', {
@@ -305,7 +299,6 @@
                                 this.$notify.error({
                                     title: '注册失败',
                                     message: res.data.status,
-                                    offset: 100
                                 })
                             }
                         }).catch(err => { console.log(err) })
@@ -336,6 +329,7 @@
     }
     .slogan {
         text-align: center;
+        margin-bottom: 20em;
         .header {
             margin-top: 2em;
             font-size: 3.5em;
@@ -363,11 +357,11 @@
     }
     .loginPanel {
         margin-top: 7em;
-        margin-bottom: 10em;
+        /*margin-bottom: 10em;*/
     }
     .registerPanel {
         margin-top: 2em;
-        margin-bottom: 4em;
+        /*margin-bottom: 4em;*/
     }
     .form {
         margin-top: 3em;

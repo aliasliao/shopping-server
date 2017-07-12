@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <el-menu default-active="/homepage/login" theme="dark" mode="horizontal" router>
+    <div class="content">
+        <el-menu class="header" default-active="/homepage/login" theme="dark" mode="horizontal" router>
             <el-row>
                 <el-col :lg="{span:6, offset:2}">
                     <el-menu-item index="/homepage/login">
@@ -23,7 +23,11 @@
             </el-row>
         </el-menu>
 
-        <router-view></router-view>
+        <router-view class="body"></router-view>
+
+        <div class="footer">
+            <div class="right">© 2017 快购宝 All Rights Reserved</div>
+        </div>
     </div>
 </template>
 
@@ -54,7 +58,6 @@
                         this.$notify.success({
                             title: '注销成功',
                             message: '账户注销成功，请重新登录',
-                            offset: 100
                         })
                         this.$store.commit('logout')
                         this.$router.push('/')
@@ -63,7 +66,6 @@
                         this.$notify.warning({
                             title: '注销失败',
                             message: res.data,
-                            offset: 100
                         })
                     }
                 }).catch(err => { console.log(err) })
@@ -73,8 +75,26 @@
 </script>
 
 <style lang="scss" scoped>
-    .logo {
-        font-size: 2em;
+    .content {
+        background-image: url(../image/hip-square.png);
+        .header {
+            border-width: o;
+            .logo {
+                font-size: 2em;
+            }
+        }
+        .body {
+            min-height: 20em;
+        }
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 10em;
+            .right {
+                font-size: 0.8em;
+            }
+        }
     }
 </style>
 
