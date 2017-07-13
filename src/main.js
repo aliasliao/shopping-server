@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+
+if (DEVELOPMENT) {
+    var ElementUI = require('element-ui')  // development only
+    require('element-ui/lib/theme-default/index.css')  // development only
+}
 
 import App from './components/App.vue'
 import Homepage from './components/Homepage.vue'
@@ -11,9 +14,11 @@ import Goods from './components/Goods.vue'
 import Info from './components/Info.vue'
 
 
-Vue.use(Vuex)
-Vue.use(VueRouter)
-Vue.use(ElementUI)
+if (DEVELOPMENT) {
+    Vue.use(Vuex)
+    Vue.use(VueRouter)
+    Vue.use(ElementUI)
+}
 
 
 const store = new Vuex.Store({
