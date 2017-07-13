@@ -121,7 +121,6 @@
                 this.currentOrderIndex = index
                 this.stateForm.state = ''
                 this.stateForm.fastState = ''
-                this.$refs.stateForm.resetFields()
             },
             confirm () {
                 this.pending = true

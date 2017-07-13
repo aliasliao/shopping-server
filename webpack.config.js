@@ -1,5 +1,7 @@
 const webpack = require('webpack')
 const { resolve } = require('path')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     entry: [
@@ -77,6 +79,17 @@ if (process.env.NODE_ENV === 'production') {
         }),
         new webpack.LoaderOptionsPlugin({
             minimize: true
-        })
+        }),
+        new ExtractTextPlugin('style-[contenthash:10].css'), // bundle file name
+        new HtmlWebpackPlugin({
+            template: 'index-template.html',
+            filename: 'index.html', // default name
+            favicon: 'favicon.ico'
+        }),
     ])
+
+    module.exports.module.rules[1].loader = ExtractTextPlugin.extract({
+        use: 'css-loader',
+        fallback: 'vue-style-loader' // <- this is a dep of vue-loader, so no need to explicitly install if using npm3
+    })
 }
