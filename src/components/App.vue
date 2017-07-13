@@ -15,9 +15,9 @@
                         <el-button @click="switchHomepageLogin" type="success">切换到登录</el-button>
                     </el-menu-item>
                 </el-col>
-                <el-col v-else :lg="{span:6, offset:10}">
+                <el-col v-else :lg="{span:8, offset:8}">
                     <el-menu-item index="/goods">商品录入</el-menu-item>
-                    <el-menu-item index="/info">商家信息</el-menu-item>
+                    <el-menu-item index="/info">商家信息 ({{ $store.state.info.id }})</el-menu-item>
                     <el-menu-item index="" @click="logOut">注销</el-menu-item>
                 </el-col>
             </el-row>

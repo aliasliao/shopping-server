@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-default/index.css'
 import App from './components/App.vue'
 import Homepage from './components/Homepage.vue'
 import Orders from './components/Orders.vue'
+import Goods from './components/Goods.vue'
+import Info from './components/Info.vue'
 
 
 Vue.use(Vuex)
@@ -53,7 +55,18 @@ const router = new VueRouter({routes: [
     },
     {
         path: '/orders',
-        component: Orders
+        component: Orders,
+        meta: {requiresAuth:true},
+    },
+    {
+        path: '/goods',
+        component: Goods,
+        meta: {requiresAuth:true},
+    },
+    {
+        path: '/info',
+        component: Info,
+        meta: {requiresAuth:true},
     }
 ]})
 

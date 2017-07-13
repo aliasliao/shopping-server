@@ -46,9 +46,10 @@
 
         <el-dialog title="修改订单状态" :visible.sync="showStateDialog">
             <el-form :model="stateForm"
+                     :rules="stateRules"
                      ref="stateForm"
                      label-width="5em">
-                <el-form-item label="订单状态">
+                <el-form-item label="订单状态" prop="state">
                     <el-input v-model="stateForm.state"></el-input>
                 </el-form-item>
                 <el-form-item label="快速填写">
@@ -80,6 +81,18 @@
 
     export default {
         data () {
+            let validateState = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入订单状态'))
+                }
+                else if (value.length < 2 || value.length > 16) {
+                    callback(new Error('订单状态长度在2到16个字符之间'))
+                }
+                else {
+                    callback()
+                }
+            }
+
             return {
                 orders: [],
                 loading: false,
@@ -89,7 +102,10 @@
                 },
                 showStateDialog: false,
                 currentOrderIndex: 0,
-                pending: false
+                pending: false,
+                stateRules: {
+                    state: [{ validator: validateState, trigger: 'blur' }]
+                }
             }
         },
         created () {
@@ -103,32 +119,47 @@
             modifyState (index) {
                 this.showStateDialog = true
                 this.currentOrderIndex = index
+                this.stateForm.state = ''
+                this.stateForm.fastState = ''
+                this.$refs.stateForm.resetFields()
             },
             confirm () {
                 this.pending = true
 
-                let order = this.orders[this.currentOrderIndex]
-                let postData = { id: order.id, state: this.stateForm.state }
-                axios.post('/merchant/updateOrder', postData).then(res => {
-                    this.pending = false
+                this.$refs.stateForm.validate(valid => {
+                    if (valid) {
+                        let order = this.orders[this.currentOrderIndex]
+                        let postData = { id: order.id, state: this.stateForm.state }
 
-                    if (res.data === 'success') {
-                        this.$notify.success({
-                            title: '修改成功',
-                            message: `订单状态修改为 ${this.stateForm.state}`
+                        axios.post('/merchant/updateOrder', postData).then(res => {
+                            this.pending = false
+
+                            if (res.data === 'success') {
+                                this.$notify.success({
+                                    title: '修改成功',
+                                    message: `订单状态修改为 ${this.stateForm.state}`
+                                })
+
+                                this.orders[this.currentOrderIndex].state = this.stateForm.state
+                            }
+                            else {
+                                this.$notify.error({
+                                    title: '修改失败',
+                                    message: res.data
+                                })
+                            }
+                        }).catch(err => {
+                            console.log(err)
+                            this.$notify.error({
+                                title: '修改失败',
+                                message: err.message
+                            })
                         })
 
-                        this.orders[this.currentOrderIndex].state = this.stateForm.state
+                        this.showStateDialog = false
                     }
-                    else {
-                        this.$notify.error({
-                            title: '修改失败',
-                            message: res.data
-                        })
-                    }
-                }).catch(err => { console.log(err) })
-
-                this.showStateDialog = false
+                    else { console.log('state form invalid!') }
+                })
             },
             abort () {
                 this.showStateDialog = false

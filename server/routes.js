@@ -466,8 +466,13 @@ router
                 ctx.merchantId
             ]
 
-            await ctx.conn.query(sql, data)
-            ctx.body = 'success'
+            let [result] = await ctx.conn.query(sql, data)
+            if (result.affectedRows !== 0) {
+                ctx.body = 'success'
+            }
+            else {
+                ctx.body = '没有插入成功'
+            }
         } catch (err) {
             ctx.body = err.message
         }
@@ -497,8 +502,13 @@ router
                 formData.imageUrl
             ]
 
-            await ctx.conn.query(sql, data)
-            ctx.body = 'success'
+            let [result] = await ctx.conn.query(sql, data)
+            if (result.affectedRows !== 0) {
+                ctx.body = 'success'
+            }
+            else {
+                ctx.body = '没有插入成功'
+            }
         } catch (err) {
             ctx.body = err.message
         }
