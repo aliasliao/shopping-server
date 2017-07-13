@@ -8,7 +8,13 @@ let router = new Router();
 
 router
     .get('/', async (ctx, next) => {
-        ctx.path = 'index.html'
+        if (process.env.NODE_ENV === 'development') {
+            ctx.path = 'index.html'
+        }
+        else {
+            ctx.path = '/dist/index.html'
+        }
+
         await next()
     })
     .get('/test', async (ctx, next) => {

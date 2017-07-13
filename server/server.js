@@ -53,5 +53,5 @@ app.use(async (ctx) => {
 })
 
 app.listen(PORT, () => {
-    console.log(`\nKoa server is listening on port ${PORT}...\n`)
+    console.log(`\nKoa server is listening on port ${PORT} (${process.env.NODE_ENV} mode)...\n`)
 })
