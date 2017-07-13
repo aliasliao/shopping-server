@@ -329,7 +329,7 @@
     }
     .slogan {
         text-align: center;
-        margin-bottom: 20em;
+        margin-bottom: 30em;
         .header {
             margin-top: 2em;
             font-size: 3.5em;

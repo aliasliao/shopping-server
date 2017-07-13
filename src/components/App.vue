@@ -84,7 +84,7 @@
             }
         }
         .body {
-            min-height: 20em;
+            min-height: 40em;
         }
         .footer {
             display: flex;

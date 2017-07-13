@@ -408,11 +408,19 @@ router
         let sql = 'UPDATE `order` SET `state`=? WHERE `id`=?'
 
         try {
-            await ctx.conn.query(sql, [formData.state, formData.id])
-            ctx.body = 'success'
+            let [result] = await ctx.conn.query(sql, [formData.state, formData.id])
+
+            if (result.affectedRows !== 0) {
+                ctx.body = 'success'
+            }
+            else {
+                ctx.body = '没有匹配的记录'
+            }
         } catch (err) {
             ctx.body = err.message
         }
+
+        await next()
     })
 
     // merchant fetch info
