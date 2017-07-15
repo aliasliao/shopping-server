@@ -2,12 +2,12 @@
     <div class="content">
         <el-menu class="header" default-active="/homepage/login" theme="dark" mode="horizontal" router>
             <el-row>
-                <el-col :lg="{span:6, offset:2}">
+                <el-col :lg="{span:6, offset:2}" :xs="{span:12, offset:0}">
                     <el-menu-item index="/homepage/login">
                         <span class="logo">快捷购物</span>商户中心
                     </el-menu-item>
                 </el-col>
-                <el-col v-if="!loggedIn" :lg="{span:4, offset:12}">
+                <el-col class="switchBtn" v-if="!loggedIn" :lg="{span:4, offset:10}" :xs="{span:12, offset:0}">
                     <el-menu-item index="/homepage/login" v-if="homepageLogin" >
                         <el-button @click="switchHomepageLogin" type="warning">切换到注册</el-button>
                     </el-menu-item>
@@ -15,7 +15,7 @@
                         <el-button @click="switchHomepageLogin" type="success">切换到登录</el-button>
                     </el-menu-item>
                 </el-col>
-                <el-col v-else :lg="{span:8, offset:8}">
+                <el-col class="menuBar" v-else :lg="{span:8, offset:6}">
                     <el-menu-item index="/goods">商品录入</el-menu-item>
                     <el-menu-item index="/info">商家信息 ({{ $store.state.info.id }})</el-menu-item>
                     <el-menu-item index="" @click="logOut">注销</el-menu-item>
@@ -76,11 +76,27 @@
 
 <style lang="scss" scoped>
     .content {
-        background-image: url(../image/hip-square.png);
+        background-image: url(../image/bg.png);
         .header {
             border-width: o;
             .logo {
                 font-size: 2em;
+            }
+            .switchBtn {
+                display: flex;
+                justify-content: flex-end;
+            }
+            @media screen and (min-width: 1200px) {
+                .menuBar {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            }
+            @media screen and (max-width: 768px) {
+                .menuBar {
+                    display: flex;
+                    justify-content: space-around;
+                }
             }
         }
         .body {

@@ -30,6 +30,7 @@
                     </el-col>
                 </el-row>
             </el-col>
+
             <el-col :lg="{span:9}">
                 <el-row>
                     <el-col :lg="{span:18, offset:0}">
@@ -52,6 +53,7 @@
                                 </el-form-item>
                             </el-form>
                         </el-card>
+
                         <el-card class="panel registerPanel" v-else>
                             <el-form class="form"
                                      ref="registerForm"
