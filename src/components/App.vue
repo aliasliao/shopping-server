@@ -99,8 +99,10 @@
                 }
             }
         }
-        .body {
-            min-height: 40em;
+        @media screen and (min-width: 1200px) {
+            .body {
+                min-height: 40em;
+            }
         }
         .footer {
             display: flex;
